@@ -1,9 +1,10 @@
 {
-  "name": "@joostdelange/automation-cli",
+  "name": "@joostdelange/cli",
   "version": "1.0.0",
   "type": "module",
   "bin": {
-    "automation-cli": "dist/index.js"
+    "joostdelange-cli": "dist/index.js",
+    "jcli": "dist/index.js"
   },
   "main": "dist/index.js",
   "scripts": {

@@ -5,7 +5,8 @@ import { createOrganizationAccount } from './createOrganizationAccount.js';
 const program = new Command();
 
 program
-  .name('automation-scripts')
+  .name('joostdelange-cli')
+  .name('jcli')
 
 program
   .command('create-organization-account')
