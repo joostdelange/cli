@@ -4,13 +4,13 @@ import { ListRootsCommand, ListOrganizationalUnitsForParentCommand } from '@aws-
 import { CreateOrganizationalUnitCommand, CreateAccountCommand } from '@aws-sdk/client-organizations';
 import { MoveAccountCommand } from '@aws-sdk/client-organizations';
 import { OrganizationalUnit, CreateAccountState } from '@aws-sdk/client-organizations';
-import { STSClient } from '@aws-sdk/client-sts';
+import { fromTemporaryCredentials } from '@aws-sdk/credential-providers';
+import { IAMClient, CreateUserCommand } from '@aws-sdk/client-iam';
 import { input, select, Separator } from '@inquirer/prompts';
 import colors from '@colors/colors';
 import ora from 'ora';
 
 const organizationsClient = new OrganizationsClient();
-const stsClient = new STSClient();
 const spinner = ora();
 
 export async function createOrganizationAccount() {
@@ -49,6 +49,8 @@ export async function createOrganizationAccount() {
     spinner.stop();
   }
 
+  // TODO: allow selecting an existing account with the option to create a new one
+
   const accountName = await input({ message: `Name of the new account to be placed under organizational unit '${parentOrganizationalUnit.Name}'` });
   const accountEmail = await input({ message: 'And what about the email address?' });
 
@@ -56,7 +58,18 @@ export async function createOrganizationAccount() {
   const account = await createAccount(accountName, accountEmail, organizationRoot.Id, parentOrganizationalUnit.Id);
   spinner.stop();
 
-  console.log(JSON.stringify(account, null, 2));
+  const credentials = fromTemporaryCredentials({
+    params: {
+      RoleArn: `arn:aws:iam::${account.Id}:role/OrganizationAccountAccessRole`,
+      RoleSessionName: 'Temporary',
+    },
+  });
+
+  const iamClient = new IAMClient({ credentials });
+  const createUserCommand = new CreateUserCommand({ UserName: 'pipeline-user' });
+  const { User } = await iamClient.send(createUserCommand);
+
+  console.log(User);
 }
 
 async function getOrganization() {

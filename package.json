@@ -10,6 +10,8 @@
     "build": "esbuild --bundle src/index.ts --platform=node --format=esm --packages=external --outfile=dist/index.js"
   },
   "dependencies": {
+    "@aws-sdk/credential-providers": "3.414.0",
+    "@aws-sdk/client-iam": "3.414.0",
     "@aws-sdk/client-organizations": "3.414.0",
     "@aws-sdk/client-sts": "3.414.0",
     "@colors/colors": "^1.6.0",
