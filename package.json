@@ -1,6 +1,6 @@
 {
   "name": "@joostdelange/cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "bin": {
     "joostdelange-cli": "dist/index.js",
@@ -23,6 +23,7 @@
     "ora": "7.0.1"
   },
   "devDependencies": {
+    "@smithy/types": "2.3.2",
     "@types/node": "20.6.2",
     "esbuild": "0.19.3"
   }

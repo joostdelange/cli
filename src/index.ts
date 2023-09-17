@@ -1,15 +1,14 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { createOrganizationAccount } from './createOrganizationAccount.js';
+import { setupOrganizationAccount } from './actions/setupOrganizationAccount.js';
 
-const program = new Command();
-
-program
-  .name('joostdelange-cli')
-  .name('jcli')
+const program = new Command('joostdelange-cli');
 
 program
-  .command('create-organization-account')
-  .action(createOrganizationAccount);
+  .alias('jcli');
+
+program
+  .command('setup-organization-account')
+  .action(setupOrganizationAccount);
 
 program.parse();
