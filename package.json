@@ -1,0 +1,26 @@
+{
+  "name": "@joostdelange/automation-cli",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "automation-cli": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "esbuild --bundle src/index.ts --platform=node --format=esm --packages=external --outfile=dist/index.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-organizations": "3.414.0",
+    "@aws-sdk/client-sts": "3.414.0",
+    "@colors/colors": "^1.6.0",
+    "@inquirer/core": "5.0.0",
+    "@inquirer/prompts": "3.1.1",
+    "@inquirer/type": "1.1.4",
+    "commander": "11.0.0",
+    "ora": "7.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.6.2",
+    "esbuild": "0.19.3"
+  }
+}

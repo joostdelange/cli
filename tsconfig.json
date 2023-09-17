@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext"
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "ignore": [],
+    "esm": true
+  }
+}
