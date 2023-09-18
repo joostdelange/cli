@@ -1,6 +1,6 @@
 {
   "name": "@joostdelange/cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "bin": {
     "joostdelange-cli": "dist/index.js",
@@ -20,7 +20,8 @@
     "@inquirer/prompts": "3.1.1",
     "@inquirer/type": "1.1.4",
     "commander": "11.0.0",
-    "ora": "7.0.1"
+    "ora": "7.0.1",
+    "signal-exit": "4.1.0"
   },
   "devDependencies": {
     "@smithy/types": "2.3.2",

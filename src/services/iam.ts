@@ -1,5 +1,6 @@
 import { AwsCredentialIdentityProvider } from '@smithy/types';
 import { IAMClient } from '@aws-sdk/client-iam';
+import { ListPoliciesCommand } from '@aws-sdk/client-iam';
 import { CreateUserCommand, AttachUserPolicyCommand, CreateAccessKeyCommand } from '@aws-sdk/client-iam';
 import { User } from '@aws-sdk/client-iam';
 
@@ -11,14 +12,25 @@ export async function createUser(credentials: AwsCredentialIdentityProvider, use
   return User;
 }
 
-export async function attachUserPolicy(credentials: AwsCredentialIdentityProvider, user: User) {
+export async function getPolicies(credentials: AwsCredentialIdentityProvider) {
   const iamClient = new IAMClient({ credentials });
-  const attachUserPolicyCommand = new AttachUserPolicyCommand({
-    UserName: user.UserName,
-    PolicyArn: 'arn:aws:iam::aws:policy/AdministratorAccess',
-  });
+  const listPoliciesCommand = new ListPoliciesCommand({});
+  const { Policies } = await iamClient.send(listPoliciesCommand);
 
-  await iamClient.send(attachUserPolicyCommand);
+  return Policies;
+}
+
+export async function attachUserPolicies(credentials: AwsCredentialIdentityProvider, user: User, policyArns: string[]) {
+  const iamClient = new IAMClient({ credentials });
+  
+  for await (const policyArn of policyArns) {
+    const attachUserPolicyCommand = new AttachUserPolicyCommand({
+      UserName: user.UserName,
+      PolicyArn: policyArn,
+    });
+  
+    await iamClient.send(attachUserPolicyCommand);
+  }
 }
 
 export async function createUserAccessKey(credentials: AwsCredentialIdentityProvider, user: User) {
