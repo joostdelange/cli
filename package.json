@@ -8,9 +8,13 @@
   },
   "main": "dist/index.js",
   "scripts": {
+    "prepare": "simple-git-hooks",
     "build": "esbuild --bundle src/index.ts --platform=node --format=esm --packages=external --outfile=dist/index.js",
     "dev": "ts-node src/index.ts",
     "lint": "eslint ."
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint"
   },
   "dependencies": {
     "@aws-sdk/client-iam": "3.414.0",
@@ -36,6 +40,7 @@
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-prettier": "5.0.0",
     "eslint-plugin-unused-imports": "3.0.0",
-    "prettier": "3.0.3"
+    "prettier": "3.0.3",
+    "simple-git-hooks": "2.9.0"
   }
 }
