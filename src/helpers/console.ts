@@ -2,7 +2,11 @@ import { Console } from 'node:console';
 import { Transform } from 'node:stream';
 
 export function tableWithoutStringQuotes(input: any[]) {
-  const transform = new Transform({ transform(chunk, _enc, cb) { cb(null, chunk) } });
+  const transform = new Transform({
+    transform(chunk, _enc, cb) {
+      cb(null, chunk);
+    },
+  });
   const logger = new Console({ stdout: transform });
 
   logger.table(input);

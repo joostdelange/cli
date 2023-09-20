@@ -1,16 +1,17 @@
 import colors from '@colors/colors';
 import ora from 'ora';
-import { getOrganization, getOrganizationRoot, getAllOrganizationalUnits, getParentOrganizationalUnit, createOrganizationalUnit } from '../services/organizations.js';
-import { getAllAccounts } from '../services/organizations.js';
-import { getTemporaryCredentials } from '../services/credentialProvider.js';
+import { OrganizationsService } from '../services/OrganizationsService.js';
+import { CredentialProviderService } from '../services/CredentialProviderService.js';
 import { ResourceActionsPrompt } from '../prompts/ResourceActionsPrompt.js';
 import { OrganizationsPrompt } from '../prompts/OrganizationsPrompt.js';
 
 const spinner = ora();
+const organizationsService = new OrganizationsService();
+const credentialProviderService = new CredentialProviderService();
 
 export async function setupOrganizationAccount() {
   spinner.start('Fetching organization');
-  const [organization, organizationRoot] = await Promise.all([getOrganization(), getOrganizationRoot()]);
+  const [organization, organizationRoot] = await Promise.all([organizationsService.getOrganization(), organizationsService.getOrganizationRoot()]);
 
   if (!organization.Id) {
     spinner.stop();
@@ -20,17 +21,17 @@ export async function setupOrganizationAccount() {
   }
 
   spinner.text = 'Fetching existing organizational units';
-  const organizationalUnits = await getAllOrganizationalUnits(organizationRoot.Id);
+  const organizationalUnits = await organizationsService.getAllOrganizationalUnits(organizationRoot.Id);
 
   spinner.text = 'Fetching existing accounts';
-  const accounts = await getAllAccounts();
+  const accounts = await organizationsService.getAllAccounts();
 
   spinner.stop();
 
   const organizationsPrompt = new OrganizationsPrompt(organizationRoot, organizationalUnits, accounts, spinner);
   const { account } = await organizationsPrompt.run();
 
-  const credentials = getTemporaryCredentials(account.Id);
+  const credentials = credentialProviderService.getTemporaryCredentials(account.Id);
 
   const resourceActionsPrompt = new ResourceActionsPrompt(credentials, spinner);
   await resourceActionsPrompt.run();
