@@ -1,5 +1,14 @@
-import { DescribeOrganizationCommand, DescribeCreateAccountStatusCommand, DescribeAccountCommand } from '@aws-sdk/client-organizations';
-import { ListRootsCommand, ListOrganizationalUnitsForParentCommand, ListAccountsCommand, ListParentsCommand } from '@aws-sdk/client-organizations';
+import {
+  DescribeOrganizationCommand,
+  DescribeCreateAccountStatusCommand,
+  DescribeAccountCommand,
+} from '@aws-sdk/client-organizations';
+import {
+  ListRootsCommand,
+  ListOrganizationalUnitsForParentCommand,
+  ListAccountsCommand,
+  ListParentsCommand,
+} from '@aws-sdk/client-organizations';
 import { CreateOrganizationalUnitCommand, CreateAccountCommand } from '@aws-sdk/client-organizations';
 import { MoveAccountCommand } from '@aws-sdk/client-organizations';
 import { CreateAccountState, AccountStatus } from '@aws-sdk/client-organizations';
@@ -57,7 +66,9 @@ export class OrganizationsService {
     const getCallerIdentityCommand = new GetCallerIdentityCommand({});
     const callerIdentity = await this.stsClient.send(getCallerIdentityCommand);
 
-    return Accounts.filter((item) => item.Status === AccountStatus.ACTIVE).filter((item) => item.Id !== callerIdentity.Account);
+    return Accounts.filter((item) => item.Status === AccountStatus.ACTIVE).filter(
+      (item) => item.Id !== callerIdentity.Account,
+    );
   }
 
   async getParentOrganizationalUnit(id: string) {
@@ -79,13 +90,16 @@ export class OrganizationsService {
       const describeCreateAccountStatusCommand = new DescribeCreateAccountStatusCommand({
         CreateAccountRequestId: CreateAccountStatus.Id,
       });
-      CreateAccountStatus = (await this.organizationsClient.send(describeCreateAccountStatusCommand)).CreateAccountStatus;
+      CreateAccountStatus = (await this.organizationsClient.send(describeCreateAccountStatusCommand))
+        .CreateAccountStatus;
 
       await new Promise((resolve) => setTimeout(() => resolve('sleep'), 2000));
     }
 
     if (CreateAccountStatus.State === CreateAccountState.FAILED) {
-      console.error(colors.red(`⚠  Account creation failed with failure reason: ${CreateAccountStatus.FailureReason}`));
+      console.error(
+        colors.red(`⚠  Account creation failed with failure reason: ${CreateAccountStatus.FailureReason}`),
+      );
 
       return;
     }

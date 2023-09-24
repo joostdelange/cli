@@ -11,7 +11,10 @@ const credentialProviderService = new CredentialProviderService();
 
 export async function setupOrganizationAccount() {
   spinner.start('Fetching organization');
-  const [organization, organizationRoot] = await Promise.all([organizationsService.getOrganization(), organizationsService.getOrganizationRoot()]);
+  const [organization, organizationRoot] = await Promise.all([
+    organizationsService.getOrganization(),
+    organizationsService.getOrganizationRoot(),
+  ]);
 
   if (!organization.Id) {
     spinner.stop();

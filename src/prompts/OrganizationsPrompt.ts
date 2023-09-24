@@ -48,7 +48,11 @@ export class OrganizationsPrompt {
             value: undefined,
             name: colors.underline('Create a new organizational unit'),
           },
-          new Separator(colors.grey(!this.organizationalUnits.length ? 'There are no existing organizational units' : 'Organizational units')),
+          new Separator(
+            colors.grey(
+              !this.organizationalUnits.length ? 'There are no existing organizational units' : 'Organizational units',
+            ),
+          ),
           ...this.organizationalUnits.map((organizationalUnit) => ({
             value: organizationalUnit.Id,
             name: organizationalUnit.Name,
@@ -57,14 +61,19 @@ export class OrganizationsPrompt {
       });
 
       if (selectedParentOrganizationalUnitId) {
-        parentOrganizationalUnit = this.organizationalUnits.find((item) => item.Id === selectedParentOrganizationalUnitId);
+        parentOrganizationalUnit = this.organizationalUnits.find(
+          (item) => item.Id === selectedParentOrganizationalUnitId,
+        );
       } else {
         const parentOrganizationalUnitName = await input({
           message: 'Name of the new parent organizational unit',
         });
 
         this.spinner.start(`Creating new organizational unit '${parentOrganizationalUnitName}'`);
-        parentOrganizationalUnit = await this.organizationsService.createOrganizationalUnit(parentOrganizationalUnitName, this.organizationRoot.Id);
+        parentOrganizationalUnit = await this.organizationsService.createOrganizationalUnit(
+          parentOrganizationalUnitName,
+          this.organizationRoot.Id,
+        );
         this.spinner.stop();
       }
 
@@ -76,7 +85,12 @@ export class OrganizationsPrompt {
       });
 
       this.spinner.start(`Creating new account '${accountName}'`);
-      account = await this.organizationsService.createAccount(accountName, accountEmail, this.organizationRoot.Id, parentOrganizationalUnit.Id);
+      account = await this.organizationsService.createAccount(
+        accountName,
+        accountEmail,
+        this.organizationRoot.Id,
+        parentOrganizationalUnit.Id,
+      );
       this.spinner.stop();
     }
 
