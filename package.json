@@ -1,6 +1,6 @@
 {
   "name": "@joostdelange/cli",
-  "version": "1.0.4",
+  "version": "0.0.1",
   "type": "module",
   "bin": {
     "joostdelange-cli": "dist/index.js",
@@ -27,18 +27,18 @@
     "@aws-sdk/client-sts": "3.418.0",
     "@aws-sdk/credential-providers": "3.418.0",
     "@colors/colors": "^1.6.0",
-    "@inquirer/core": "5.0.0",
-    "@inquirer/prompts": "3.1.1",
-    "@inquirer/type": "1.1.4",
+    "@inquirer/core": "5.0.1",
+    "@inquirer/prompts": "3.1.2",
+    "@inquirer/type": "1.1.5",
     "commander": "11.0.0",
     "ora": "7.0.1",
     "signal-exit": "4.1.0"
   },
   "devDependencies": {
     "@smithy/types": "2.3.3",
-    "@types/node": "20.6.4",
-    "@typescript-eslint/eslint-plugin": "6.7.2",
-    "@typescript-eslint/parser": "6.7.2",
+    "@types/node": "20.7.0",
+    "@typescript-eslint/eslint-plugin": "6.7.3",
+    "@typescript-eslint/parser": "6.7.3",
     "esbuild": "0.19.3",
     "eslint": "8.50.0",
     "eslint-config-prettier": "9.0.0",
