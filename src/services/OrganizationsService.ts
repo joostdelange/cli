@@ -52,7 +52,7 @@ export class OrganizationsService {
     return OrganizationalUnits || [];
   }
 
-  async createOrganizationalUnit(name: string, parentId: string) {
+  async createOrganizationalUnit(name: string, parentId?: string) {
     const createOrganizationalUnitCommand = new CreateOrganizationalUnitCommand({ Name: name, ParentId: parentId });
     const { OrganizationalUnit } = await this.organizationsClient.send(createOrganizationalUnitCommand);
 
@@ -66,12 +66,14 @@ export class OrganizationsService {
     const getCallerIdentityCommand = new GetCallerIdentityCommand({});
     const callerIdentity = await this.stsClient.send(getCallerIdentityCommand);
 
-    return Accounts.filter((item) => item.Status === AccountStatus.ACTIVE).filter(
-      (item) => item.Id !== callerIdentity.Account,
+    return (
+      Accounts?.filter((item) => item.Status === AccountStatus.ACTIVE).filter(
+        (item) => item.Id !== callerIdentity.Account,
+      ) || []
     );
   }
 
-  async getParentOrganizationalUnit(id: string) {
+  async getParentOrganizationalUnit(id?: string) {
     const listParentsCommand = new ListParentsCommand({ ChildId: id });
     const { Parents } = await this.organizationsClient.send(listParentsCommand);
     const [parent] = Parents || [];
@@ -79,14 +81,14 @@ export class OrganizationsService {
     return parent || {};
   }
 
-  async createAccount(name: string, email: string, organizationRootId: string, organizationalUnitId: string) {
+  async createAccount(name: string, email: string, organizationRootId?: string, organizationalUnitId?: string) {
     const createAccountCommand = new CreateAccountCommand({
       AccountName: name,
       Email: email,
     });
     let { CreateAccountStatus } = await this.organizationsClient.send(createAccountCommand);
 
-    while (CreateAccountStatus.State === CreateAccountState.IN_PROGRESS) {
+    while (CreateAccountStatus?.State === CreateAccountState.IN_PROGRESS) {
       const describeCreateAccountStatusCommand = new DescribeCreateAccountStatusCommand({
         CreateAccountRequestId: CreateAccountStatus.Id,
       });
@@ -96,7 +98,7 @@ export class OrganizationsService {
       await new Promise((resolve) => setTimeout(() => resolve('sleep'), 2000));
     }
 
-    if (CreateAccountStatus.State === CreateAccountState.FAILED) {
+    if (CreateAccountStatus?.State === CreateAccountState.FAILED) {
       console.error(
         colors.red(`⚠  Account creation failed with failure reason: ${CreateAccountStatus.FailureReason}`),
       );
@@ -105,14 +107,14 @@ export class OrganizationsService {
     }
 
     const moveAccountCommand = new MoveAccountCommand({
-      AccountId: CreateAccountStatus.AccountId,
+      AccountId: CreateAccountStatus?.AccountId,
       SourceParentId: organizationRootId,
       DestinationParentId: organizationalUnitId,
     });
     await this.organizationsClient.send(moveAccountCommand);
 
     const describeAccountCommand = new DescribeAccountCommand({
-      AccountId: CreateAccountStatus.AccountId,
+      AccountId: CreateAccountStatus?.AccountId,
     });
     const { Account } = await this.organizationsClient.send(describeAccountCommand);
 

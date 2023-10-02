@@ -36,10 +36,10 @@ export class OrganizationsPrompt {
     let parentOrganizationalUnit: OrganizationalUnit = {};
 
     if (selectedAccountId) {
-      account = this.accounts.find((item) => item.Id === selectedAccountId);
+      account = this.accounts.find((item) => item.Id === selectedAccountId) || {};
 
       const parent = await this.organizationsService.getParentOrganizationalUnit(account.Id);
-      parentOrganizationalUnit = this.organizationalUnits.find((item) => item.Id === parent.Id);
+      parentOrganizationalUnit = this.organizationalUnits.find((item) => item.Id === parent.Id) || {};
     } else {
       const selectedParentOrganizationalUnitId = await select({
         message: 'What should be the parent organizational unit of the account?',
@@ -61,19 +61,19 @@ export class OrganizationsPrompt {
       });
 
       if (selectedParentOrganizationalUnitId) {
-        parentOrganizationalUnit = this.organizationalUnits.find(
-          (item) => item.Id === selectedParentOrganizationalUnitId,
-        );
+        parentOrganizationalUnit =
+          this.organizationalUnits.find((item) => item.Id === selectedParentOrganizationalUnitId) || {};
       } else {
         const parentOrganizationalUnitName = await input({
           message: 'Name of the new parent organizational unit',
         });
 
         this.spinner.start(`Creating new organizational unit '${parentOrganizationalUnitName}'`);
-        parentOrganizationalUnit = await this.organizationsService.createOrganizationalUnit(
-          parentOrganizationalUnitName,
-          this.organizationRoot.Id,
-        );
+        parentOrganizationalUnit =
+          (await this.organizationsService.createOrganizationalUnit(
+            parentOrganizationalUnitName,
+            this.organizationRoot.Id,
+          )) || {};
         this.spinner.stop();
       }
 
@@ -85,12 +85,13 @@ export class OrganizationsPrompt {
       });
 
       this.spinner.start(`Creating new account '${accountName}'`);
-      account = await this.organizationsService.createAccount(
-        accountName,
-        accountEmail,
-        this.organizationRoot.Id,
-        parentOrganizationalUnit.Id,
-      );
+      account =
+        (await this.organizationsService.createAccount(
+          accountName,
+          accountEmail,
+          this.organizationRoot.Id,
+          parentOrganizationalUnit.Id,
+        )) || {};
       this.spinner.stop();
     }
 

@@ -13,17 +13,17 @@ export class KmsService {
 
   async listKeys() {
     const listKeysCommand = new ListKeysCommand({});
-    const { Keys } = await this.kmsClient.send(listKeysCommand);
+    const Keys = (await this.kmsClient.send(listKeysCommand)).Keys || [];
 
     const KeysWithAliases = await Promise.all(
       Keys.map(async (key) => {
         const describeKeyCommand = new DescribeKeyCommand({ KeyId: key.KeyId });
         const { KeyMetadata } = await this.kmsClient.send(describeKeyCommand);
 
-        if (KeyMetadata.PendingDeletionWindowInDays) return;
+        if (KeyMetadata?.PendingDeletionWindowInDays) return;
 
         const listAliasesCommand = new ListAliasesCommand({ KeyId: key.KeyId });
-        const { Aliases } = await this.kmsClient.send(listAliasesCommand);
+        const Aliases = (await this.kmsClient.send(listAliasesCommand)).Aliases || [];
 
         if (!Aliases.length) return;
 
@@ -43,16 +43,16 @@ export class KmsService {
 
     const createAliasCommand = new CreateAliasCommand({
       AliasName: aliasName,
-      TargetKeyId: KeyMetadata.KeyId,
+      TargetKeyId: KeyMetadata?.KeyId,
     });
     await this.kmsClient.send(createAliasCommand);
 
     return KeyMetadata;
   }
 
-  async getKeyPolicy(keyMetaData: KeyMetadata) {
+  async getKeyPolicy(keyMetaData?: KeyMetadata) {
     const getKeyPolicyCommand = new GetKeyPolicyCommand({
-      KeyId: keyMetaData.KeyId,
+      KeyId: keyMetaData?.KeyId,
       PolicyName: 'default',
     });
     const { Policy } = await this.kmsClient.send(getKeyPolicyCommand);
@@ -60,9 +60,9 @@ export class KmsService {
     return Policy;
   }
 
-  async updateKeyPolicy(keyMetaData: KeyMetadata, policy: string) {
+  async updateKeyPolicy(keyMetaData?: KeyMetadata, policy?: string) {
     const putKeyPolicyCommand = new PutKeyPolicyCommand({
-      KeyId: keyMetaData.KeyId,
+      KeyId: keyMetaData?.KeyId,
       Policy: policy,
       PolicyName: 'default',
     });

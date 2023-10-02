@@ -81,7 +81,7 @@ export class ResourceActionsPrompt {
       ],
     });
 
-    let selectedUser: User;
+    let selectedUser: User | undefined;
 
     if (selectedUserArn) {
       selectedUser = users.find((user) => user.Arn === selectedUserArn);
@@ -116,7 +116,7 @@ export class ResourceActionsPrompt {
 
     const accessKeyMetadata = await this.iamService.getUserAccessKeys(selectedUser);
 
-    if (accessKeyMetadata?.length < 2) {
+    if ((accessKeyMetadata?.length || 0) < 2) {
       const shouldCreateAccessKey = await confirm({
         message: 'Would you like to create an access key for programmatic use?',
       });
@@ -125,9 +125,9 @@ export class ResourceActionsPrompt {
         const accessKey = await this.iamService.createUserAccessKey(selectedUser);
         const table = tableWithoutStringQuotes([
           {
-            'User name': accessKey.UserName,
-            'Access key id': accessKey.AccessKeyId,
-            'Secret access key': accessKey.SecretAccessKey,
+            'User name': accessKey?.UserName,
+            'Access key id': accessKey?.AccessKeyId,
+            'Secret access key': accessKey?.SecretAccessKey,
           },
         ] as never[]);
 
@@ -147,7 +147,7 @@ export class ResourceActionsPrompt {
     const table = tableWithoutStringQuotes([
       {
         'Key alias': keyAliasName,
-        'Key ARN': keyMetadata.Arn,
+        'Key ARN': keyMetadata?.Arn,
       },
     ] as never[]);
 
@@ -186,7 +186,7 @@ export class ResourceActionsPrompt {
         { value: undefined, name: colors.underline('Use default (aws/secretsmanager)') },
         { value: 'new', name: colors.underline('Provide a KMS key yourself') },
         new Separator(colors.grey('Available keys')),
-        ...keys.map((key) => ({ value: key.KeyId, name: key.Aliases[0]?.AliasName })),
+        ...keys.map((key) => ({ value: key?.KeyId, name: key?.Aliases?.[0]?.AliasName })),
       ],
     });
 
@@ -233,10 +233,10 @@ export class ResourceActionsPrompt {
 
     const arnTable = tableWithoutStringQuotes([{ 'Certificate ARN': certificate.CertificateArn }] as never[]);
     const domainTable = tableWithoutStringQuotes(
-      certificate.DomainValidationOptions.map((DomainValidationOption) => ({
-        'Record name': DomainValidationOption.ResourceRecord.Name,
-        'Record type': DomainValidationOption.ResourceRecord.Type,
-        'Record value': DomainValidationOption.ResourceRecord.Value,
+      certificate?.DomainValidationOptions?.map((DomainValidationOption) => ({
+        'Record name': DomainValidationOption?.ResourceRecord?.Name,
+        'Record type': DomainValidationOption?.ResourceRecord?.Type,
+        'Record value': DomainValidationOption?.ResourceRecord?.Value,
       })) as never[],
     );
 

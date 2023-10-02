@@ -15,7 +15,7 @@ export class IamService {
     const listUsersCommand = new ListUsersCommand({});
     const { Users } = await this.iamClient.send(listUsersCommand);
 
-    return Users;
+    return Users || [];
   }
 
   async createUser(userName: string) {
@@ -29,13 +29,13 @@ export class IamService {
     const listPoliciesCommand = new ListPoliciesCommand({});
     const { Policies } = await this.iamClient.send(listPoliciesCommand);
 
-    return Policies;
+    return Policies || [];
   }
 
-  async attachUserPolicies(user: User, policyArns: string[]) {
+  async attachUserPolicies(user: User | undefined, policyArns: (string | undefined)[]) {
     for await (const policyArn of policyArns) {
       const attachUserPolicyCommand = new AttachUserPolicyCommand({
-        UserName: user.UserName,
+        UserName: user?.UserName,
         PolicyArn: policyArn,
       });
 
@@ -43,18 +43,18 @@ export class IamService {
     }
   }
 
-  async getUserAccessKeys(user: User) {
+  async getUserAccessKeys(user?: User) {
     const listAccessKeysCommand = new ListAccessKeysCommand({
-      UserName: user.UserName,
+      UserName: user?.UserName,
     });
     const { AccessKeyMetadata } = await this.iamClient.send(listAccessKeysCommand);
 
     return AccessKeyMetadata;
   }
 
-  async createUserAccessKey(user: User) {
+  async createUserAccessKey(user?: User) {
     const createAccessKeyCommand = new CreateAccessKeyCommand({
-      UserName: user.UserName,
+      UserName: user?.UserName,
     });
     const { AccessKey } = await this.iamClient.send(createAccessKeyCommand);
 

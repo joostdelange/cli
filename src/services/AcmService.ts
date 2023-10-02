@@ -12,7 +12,7 @@ export class AcmService {
     this.acmClient = new ACMClient({ credentials });
   }
 
-  async requestCertificate(domainNames: string[], region: string) {
+  async requestCertificate(domainNames: string[], region?: string) {
     this.acmClient = new ACMClient({ credentials: this.credentials, region });
 
     const [domainName] = domainNames;

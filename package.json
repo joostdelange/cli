@@ -1,15 +1,18 @@
 {
   "name": "@joostdelange/cli",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "bin": {
-    "joostdelange-cli": "dist/index.js",
-    "jcli": "dist/index.js"
+    "joost": "dist/index.js",
+    "j": "dist/index.js"
   },
   "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "prepare": "simple-git-hooks",
-    "build": "esbuild --bundle src/index.ts --platform=node --format=esm --packages=external --outfile=dist/index.js",
+    "build": "esbuild --bundle src/index.ts --platform=node --format=esm --minify --packages=external --outfile=dist/index.js",
     "dev": "ts-node src/index.ts",
     "lint": "eslint ."
   },
@@ -17,15 +20,15 @@
     "pre-commit": "pnpm lint"
   },
   "dependencies": {
-    "@aws-sdk/client-account": "3.418.0",
-    "@aws-sdk/client-acm": "3.418.0",
-    "@aws-sdk/client-ec2": "3.418.0",
-    "@aws-sdk/client-iam": "3.418.0",
-    "@aws-sdk/client-kms": "3.418.0",
-    "@aws-sdk/client-organizations": "3.418.0",
-    "@aws-sdk/client-secrets-manager": "3.418.0",
-    "@aws-sdk/client-sts": "3.418.0",
-    "@aws-sdk/credential-providers": "3.418.0",
+    "@aws-sdk/client-account": "3.423.0",
+    "@aws-sdk/client-acm": "3.423.0",
+    "@aws-sdk/client-ec2": "3.423.0",
+    "@aws-sdk/client-iam": "3.423.0",
+    "@aws-sdk/client-kms": "3.423.0",
+    "@aws-sdk/client-organizations": "3.423.0",
+    "@aws-sdk/client-secrets-manager": "3.423.0",
+    "@aws-sdk/client-sts": "3.423.0",
+    "@aws-sdk/credential-providers": "3.423.0",
     "@colors/colors": "^1.6.0",
     "@inquirer/core": "5.0.1",
     "@inquirer/prompts": "3.1.2",
@@ -35,11 +38,13 @@
     "signal-exit": "4.1.0"
   },
   "devDependencies": {
-    "@smithy/types": "2.3.3",
-    "@types/node": "20.7.0",
-    "@typescript-eslint/eslint-plugin": "6.7.3",
-    "@typescript-eslint/parser": "6.7.3",
-    "esbuild": "0.19.3",
+    "@smithy/types": "2.3.4",
+    "@total-typescript/ts-reset": "0.5.1",
+    "@tsconfig/node-lts": "18.12.5",
+    "@types/node": "18.11.9",
+    "@typescript-eslint/eslint-plugin": "6.7.4",
+    "@typescript-eslint/parser": "6.7.4",
+    "esbuild": "0.19.4",
     "eslint": "8.50.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-prettier": "5.0.0",

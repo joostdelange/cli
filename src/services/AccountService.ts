@@ -17,6 +17,6 @@ export class AccountService {
     });
     const { Regions } = await this.accountClient.send(listRegionsCommand);
 
-    return Regions;
+    return Regions || [];
   }
 }

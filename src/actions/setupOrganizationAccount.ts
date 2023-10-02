@@ -16,7 +16,7 @@ export async function setupOrganizationAccount() {
     organizationsService.getOrganizationRoot(),
   ]);
 
-  if (!organization.Id) {
+  if (!organization?.Id) {
     spinner.stop();
     console.error(colors.red('⚠  No organization found'));
 
@@ -33,6 +33,12 @@ export async function setupOrganizationAccount() {
 
   const organizationsPrompt = new OrganizationsPrompt(organizationRoot, organizationalUnits, accounts, spinner);
   const { account } = await organizationsPrompt.run();
+
+  if (!account?.Id) {
+    console.error(colors.red('⚠  No account found'));
+
+    return;
+  }
 
   const credentials = credentialProviderService.getTemporaryCredentials(account.Id);
 
