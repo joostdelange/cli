@@ -2,9 +2,13 @@ name: Publish Package to npmjs
 on:
   release:
     types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           registry-url: 'https://registry.npmjs.org'
       
       - name: Install dependencies
@@ -38,6 +42,6 @@ jobs:
         run: pnpm build
 
       - name: Publish new version
-        run: npm publish --no-git-checks
+        run: npm publish --provenance --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
