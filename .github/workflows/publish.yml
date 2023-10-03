@@ -38,6 +38,6 @@ jobs:
         run: pnpm build
 
       - name: Publish new version
-        run: pnpm publish
+        run: pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
