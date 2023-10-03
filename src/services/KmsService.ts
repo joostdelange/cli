@@ -1,8 +1,15 @@
 import { AwsCredentialIdentityProvider } from '@smithy/types';
-import { KMSClient } from '@aws-sdk/client-kms';
-import { CreateKeyCommand, CreateAliasCommand, PutKeyPolicyCommand } from '@aws-sdk/client-kms';
-import { GetKeyPolicyCommand, ListKeysCommand, ListAliasesCommand, DescribeKeyCommand } from '@aws-sdk/client-kms';
-import { KeyMetadata } from '@aws-sdk/client-kms';
+import {
+  CreateAliasCommand,
+  CreateKeyCommand,
+  DescribeKeyCommand,
+  GetKeyPolicyCommand,
+  KeyMetadata,
+  KMSClient,
+  ListKeysCommand,
+  ListAliasesCommand,
+  PutKeyPolicyCommand,
+} from '@aws-sdk/client-kms';
 
 export class KmsService {
   kmsClient: KMSClient;

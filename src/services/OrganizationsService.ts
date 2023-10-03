@@ -1,19 +1,21 @@
 import {
-  DescribeOrganizationCommand,
-  DescribeCreateAccountStatusCommand,
+  Account,
+  AccountStatus,
+  CreateAccountCommand,
+  CreateAccountState,
+  CreateOrganizationalUnitCommand,
   DescribeAccountCommand,
-} from '@aws-sdk/client-organizations';
-import {
-  ListRootsCommand,
-  ListOrganizationalUnitsForParentCommand,
-  ListAccountsCommand,
+  DescribeCreateAccountStatusCommand,
+  DescribeOrganizationCommand,
   ListParentsCommand,
+  ListRootsCommand,
+  MoveAccountCommand,
+  OrganizationalUnit,
+  OrganizationsClient,
+  paginateListOrganizationalUnitsForParent,
+  paginateListAccounts,
 } from '@aws-sdk/client-organizations';
-import { CreateOrganizationalUnitCommand, CreateAccountCommand } from '@aws-sdk/client-organizations';
-import { MoveAccountCommand } from '@aws-sdk/client-organizations';
-import { CreateAccountState, AccountStatus } from '@aws-sdk/client-organizations';
 import { GetCallerIdentityCommand } from '@aws-sdk/client-sts';
-import { OrganizationsClient } from '@aws-sdk/client-organizations';
 import { STSClient } from '@aws-sdk/client-sts';
 import colors from '@colors/colors';
 
@@ -46,10 +48,22 @@ export class OrganizationsService {
   }
 
   async getAllOrganizationalUnits(parentId?: string) {
-    const listOrganizationalUnitsForParentCommand = new ListOrganizationalUnitsForParentCommand({ ParentId: parentId });
-    const { OrganizationalUnits } = await this.organizationsClient.send(listOrganizationalUnitsForParentCommand);
+    const paginator = paginateListOrganizationalUnitsForParent(
+      {
+        client: this.organizationsClient,
+        pageSize: 20,
+      },
+      {
+        ParentId: parentId,
+      },
+    );
+    const organizationalUnits: OrganizationalUnit[] = [];
 
-    return OrganizationalUnits || [];
+    for await (const page of paginator) {
+      organizationalUnits.push(...(page.OrganizationalUnits || []));
+    }
+
+    return organizationalUnits;
   }
 
   async createOrganizationalUnit(name: string, parentId?: string) {
@@ -60,16 +74,20 @@ export class OrganizationsService {
   }
 
   async getAllAccounts() {
-    const listAccountsCommand = new ListAccountsCommand({});
-    const { Accounts } = await this.organizationsClient.send(listAccountsCommand);
+    const accounts: Account[] = [];
+    const paginator = paginateListAccounts({ client: this.organizationsClient, pageSize: 20 }, {});
+
+    for await (const page of paginator) {
+      accounts.push(...(page.Accounts || []));
+    }
 
     const getCallerIdentityCommand = new GetCallerIdentityCommand({});
     const callerIdentity = await this.stsClient.send(getCallerIdentityCommand);
 
     return (
-      Accounts?.filter((item) => item.Status === AccountStatus.ACTIVE).filter(
-        (item) => item.Id !== callerIdentity.Account,
-      ) || []
+      accounts
+        .filter((item) => item.Status === AccountStatus.ACTIVE)
+        .filter((item) => item.Id !== callerIdentity.Account) || []
     );
   }
 

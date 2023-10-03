@@ -1,6 +1,6 @@
 import colors from '@colors/colors';
 import { Ora } from 'ora';
-import { Root, OrganizationalUnit, Account } from '@aws-sdk/client-organizations';
+import { Account, OrganizationalUnit, Root } from '@aws-sdk/client-organizations';
 import { input, select, Separator } from '@inquirer/prompts';
 import { OrganizationsService } from '../services/OrganizationsService.js';
 
@@ -30,6 +30,7 @@ export class OrganizationsPrompt {
           name: account.Name,
         })),
       ],
+      pageSize: 10,
     });
 
     let account: Account = {};

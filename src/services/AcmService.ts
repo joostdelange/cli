@@ -1,7 +1,11 @@
 import { AwsCredentialIdentityProvider } from '@smithy/types';
-import { ACMClient } from '@aws-sdk/client-acm';
-import { RequestCertificateCommand, DescribeCertificateCommand } from '@aws-sdk/client-acm';
-import { ValidationMethod, CertificateDetail } from '@aws-sdk/client-acm';
+import {
+  ACMClient,
+  CertificateDetail,
+  DescribeCertificateCommand,
+  RequestCertificateCommand,
+  ValidationMethod,
+} from '@aws-sdk/client-acm';
 
 export class AcmService {
   credentials: AwsCredentialIdentityProvider;

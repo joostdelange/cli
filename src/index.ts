@@ -5,10 +5,13 @@ import { setupOrganizationAccount } from './actions/setupOrganizationAccount.js'
 
 onExit(() => process.exit());
 
-const program = new Command('joostdelange-cli');
+const program = new Command('joost');
 
-program.alias('jcli');
+program.alias('j');
 
-program.command('setup-organization-account').action(setupOrganizationAccount);
+program
+  .command('setup-organization-account')
+  .description('Choose or create an AWS organization account and add some useful resources in it')
+  .action(setupOrganizationAccount);
 
 program.parse();

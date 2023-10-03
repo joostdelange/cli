@@ -1,7 +1,5 @@
 import { AwsCredentialIdentityProvider } from '@smithy/types';
-import { AccountClient } from '@aws-sdk/client-account';
-import { ListRegionsCommand } from '@aws-sdk/client-account';
-import { RegionOptStatus } from '@aws-sdk/client-account';
+import { AccountClient, ListRegionsCommand, RegionOptStatus } from '@aws-sdk/client-account';
 
 export class AccountService {
   accountClient: AccountClient;

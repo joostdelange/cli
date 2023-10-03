@@ -1,6 +1,5 @@
 import { AwsCredentialIdentityProvider } from '@smithy/types';
-import { SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
-import { CreateSecretCommand } from '@aws-sdk/client-secrets-manager';
+import { CreateSecretCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 
 export class SecretsManagerService {
   secretsManagerClient: SecretsManagerClient;

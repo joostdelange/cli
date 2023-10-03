@@ -1,8 +1,15 @@
 import { AwsCredentialIdentityProvider } from '@smithy/types';
-import { IAMClient } from '@aws-sdk/client-iam';
-import { ListUsersCommand, ListPoliciesCommand, ListAccessKeysCommand } from '@aws-sdk/client-iam';
-import { CreateUserCommand, AttachUserPolicyCommand, CreateAccessKeyCommand } from '@aws-sdk/client-iam';
-import { User } from '@aws-sdk/client-iam';
+import {
+  AttachUserPolicyCommand,
+  CreateAccessKeyCommand,
+  CreateUserCommand,
+  IAMClient,
+  ListAccessKeysCommand,
+  paginateListUsers,
+  paginateListPolicies,
+  Policy,
+  User,
+} from '@aws-sdk/client-iam';
 
 export class IamService {
   iamClient: IAMClient;
@@ -12,10 +19,14 @@ export class IamService {
   }
 
   async getUsers() {
-    const listUsersCommand = new ListUsersCommand({});
-    const { Users } = await this.iamClient.send(listUsersCommand);
+    const paginator = paginateListUsers({ client: this.iamClient, pageSize: 20 }, {});
+    const users: User[] = [];
 
-    return Users || [];
+    for await (const page of paginator) {
+      users.push(...(page.Users || []));
+    }
+
+    return users;
   }
 
   async createUser(userName: string) {
@@ -26,10 +37,14 @@ export class IamService {
   }
 
   async getPolicies() {
-    const listPoliciesCommand = new ListPoliciesCommand({});
-    const { Policies } = await this.iamClient.send(listPoliciesCommand);
+    const paginator = paginateListPolicies({ client: this.iamClient, pageSize: 20 }, {});
+    const policies: Policy[] = [];
 
-    return Policies || [];
+    for await (const page of paginator) {
+      policies.push(...(page.Policies || []));
+    }
+
+    return policies || [];
   }
 
   async attachUserPolicies(user: User | undefined, policyArns: (string | undefined)[]) {
