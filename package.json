@@ -1,6 +1,7 @@
 {
   "name": "@joostdelange/cli",
   "version": "1.0.1",
+  "repository": "github:joostdelange/cli",
   "type": "module",
   "bin": {
     "joost": "dist/index.js",
