@@ -1,7 +1,11 @@
 {
   "extends": "@tsconfig/node-lts/tsconfig.json",
+  "compilerOptions": {
+    "strictPropertyInitialization": false
+  },
   "include": ["src"],
   "ts-node": {
+    "transpileOnly": true,
     "esm": true
   }
 }
