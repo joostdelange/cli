@@ -17,7 +17,7 @@ import {
 } from '@aws-sdk/client-organizations';
 import { GetCallerIdentityCommand } from '@aws-sdk/client-sts';
 import { STSClient } from '@aws-sdk/client-sts';
-import colors from '@colors/colors';
+import chalk from 'chalk';
 
 export class OrganizationsService {
   organizationsClient: OrganizationsClient;
@@ -117,9 +117,7 @@ export class OrganizationsService {
     }
 
     if (CreateAccountStatus?.State === CreateAccountState.FAILED) {
-      console.error(
-        colors.red(`⚠  Account creation failed with failure reason: ${CreateAccountStatus.FailureReason}`),
-      );
+      console.error(chalk.red(`⚠  Account creation failed with failure reason: ${CreateAccountStatus.FailureReason}`));
 
       return;
     }

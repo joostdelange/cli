@@ -1,23 +1,22 @@
-import colors from '@colors/colors';
-import ora, { Ora } from 'ora';
+import chalk from 'chalk';
 import { Account, OrganizationalUnit, Root } from '@aws-sdk/client-organizations';
 import { input, select, Separator, checkbox, confirm, editor } from '@inquirer/prompts';
 import { OrganizationsService } from '../services/OrganizationsService.js';
 import { AwsCredentialIdentityProvider } from '@smithy/types';
 import { User } from '@aws-sdk/client-iam';
+import { Command } from 'commander';
+import { BasePrompt } from './BasePrompt.js';
 import { IamService } from '../services/IamService.js';
 import { KmsService } from '../services/KmsService.js';
 import { SecretsManagerService } from '../services/SecretsManagerService.js';
 import { AcmService } from '../services/AcmService.js';
 import { AccountService } from '../services/AccountService.js';
 import { CredentialProviderService } from '../services/CredentialProviderService.js';
-import { tableWithoutStringQuotes } from '../helpers/console.js';
 
-export class OrganizationsPrompt {
+export class OrganizationsPrompt extends BasePrompt {
   accounts: Account[];
   organizationRoot: Root;
   organizationalUnits: OrganizationalUnit[];
-  spinner: Ora;
   credentialProviderService: CredentialProviderService;
   organizationsService: OrganizationsService;
   credentials?: AwsCredentialIdentityProvider;
@@ -27,8 +26,9 @@ export class OrganizationsPrompt {
   acmService: AcmService;
   accountService: AccountService;
 
-  constructor() {
-    this.spinner = ora();
+  constructor(program: Command) {
+    super(program);
+
     this.credentialProviderService = new CredentialProviderService();
     this.organizationsService = new OrganizationsService();
   }
@@ -42,7 +42,7 @@ export class OrganizationsPrompt {
 
     if (!organization?.Id) {
       this.spinner.stop();
-      console.error(colors.red('⚠  No organization found'));
+      console.error(chalk.red('⚠  No organization found'));
 
       return;
     }
@@ -58,8 +58,8 @@ export class OrganizationsPrompt {
     const selectedAccountId = await select({
       message: 'Which account should be used?',
       choices: [
-        { value: undefined, name: colors.underline('Create a new acount') },
-        new Separator(colors.grey(!this.organizationalUnits.length ? 'There are no existing accounts' : 'Accounts')),
+        { value: undefined, name: chalk.underline('Create a new acount') },
+        new Separator(chalk.grey(!this.organizationalUnits.length ? 'There are no existing accounts' : 'Accounts')),
         ...this.accounts.map((account) => ({
           value: account.Id,
           name: account.Name,
@@ -82,10 +82,10 @@ export class OrganizationsPrompt {
         choices: [
           {
             value: undefined,
-            name: colors.underline('Create a new organizational unit'),
+            name: chalk.underline('Create a new organizational unit'),
           },
           new Separator(
-            colors.grey(
+            chalk.grey(
               !this.organizationalUnits.length ? 'There are no existing organizational units' : 'Organizational units',
             ),
           ),
@@ -131,7 +131,7 @@ export class OrganizationsPrompt {
     }
 
     if (!account?.Id) {
-      console.error(colors.red('⚠  No account found'));
+      console.error(chalk.red('⚠  No account found'));
 
       return;
     }
@@ -153,8 +153,8 @@ export class OrganizationsPrompt {
     const selectedResourceAction = await select({
       message: 'Choose a resource to create in the selected account',
       choices: [
-        { value: undefined, name: colors.underline('Done') },
-        new Separator(colors.grey('Actions')),
+        { value: undefined, name: chalk.underline('Done') },
+        new Separator(chalk.grey('Actions')),
         { value: 'setupUser', name: 'Setup an IAM user' },
         { value: 'createKmsKey', name: 'Create a KMS encryption key' },
         { value: 'createSecret', name: 'Create a Secrets Manager secret' },
@@ -195,8 +195,8 @@ export class OrganizationsPrompt {
     const selectedUserArn = await select({
       message: 'Choose an existing IAM user, or create a new one',
       choices: [
-        { value: undefined, name: colors.underline('Create new user') },
-        new Separator(colors.grey('Available users')),
+        { value: undefined, name: chalk.underline('Create new user') },
+        new Separator(chalk.grey('Available users')),
         ...users.map((user) => ({ value: user.Arn, name: user.UserName })),
       ],
     });
@@ -220,8 +220,8 @@ export class OrganizationsPrompt {
     const selectedPolicies = await checkbox({
       message: 'Select permissions policies to attach to the user',
       choices: [
-        { value: undefined, name: colors.underline('Skip') },
-        new Separator(colors.grey('Available policies')),
+        { value: undefined, name: chalk.underline('Skip') },
+        new Separator(chalk.grey('Available policies')),
         ...policies.map((policy) => ({
           value: policy.Arn,
           name: policy.PolicyName,
@@ -243,7 +243,7 @@ export class OrganizationsPrompt {
 
       if (shouldCreateAccessKey) {
         const accessKey = await this.iamService.createUserAccessKey(selectedUser);
-        const table = tableWithoutStringQuotes([
+        const table = this.tableWithoutStringQuotes([
           {
             'User name': accessKey?.UserName,
             'Access key id': accessKey?.AccessKeyId,
@@ -258,13 +258,13 @@ export class OrganizationsPrompt {
 
   async createKmsKey() {
     const keyAliasName = await input({ message: 'What should be the alias name of the new KMS key?' });
-    if (!keyAliasName) return console.error(colors.red('⚠  The alias name is required'));
+    if (!keyAliasName) return console.error(chalk.red('⚠  The alias name is required'));
 
     this.spinner.start('Creating new key');
     const keyMetadata = await this.kmsService.createKey(`alias/${keyAliasName}`);
     this.spinner.stop();
 
-    const table = tableWithoutStringQuotes([
+    const table = this.tableWithoutStringQuotes([
       {
         'Key alias': keyAliasName,
         'Key ARN': keyMetadata?.Arn,
@@ -292,7 +292,7 @@ export class OrganizationsPrompt {
 
   async createSecret() {
     const secretName = await input({ message: 'What should be the name of the new secret?' });
-    if (!secretName) return console.error(colors.red('⚠  The name is required'));
+    if (!secretName) return console.error(chalk.red('⚠  The name is required'));
 
     this.spinner.start('Fetching existing KMS keys');
     const keys = await this.kmsService.listKeys();
@@ -303,9 +303,9 @@ export class OrganizationsPrompt {
     selectedKeyAliasName = await select({
       message: 'Choose an existing KMS key, or use the default (aws/secretsmanager)',
       choices: [
-        { value: undefined, name: colors.underline('Use default (aws/secretsmanager)') },
-        { value: 'new', name: colors.underline('Provide a KMS key yourself') },
-        new Separator(colors.grey('Available keys')),
+        { value: undefined, name: chalk.underline('Use default (aws/secretsmanager)') },
+        { value: 'new', name: chalk.underline('Provide a KMS key yourself') },
+        new Separator(chalk.grey('Available keys')),
         ...keys.map((key) => ({ value: key?.KeyId, name: key?.Aliases?.[0]?.AliasName })),
       ],
     });
@@ -318,7 +318,7 @@ export class OrganizationsPrompt {
     const secret = await this.secretsManagerService.createSecret(secretName, selectedKeyAliasName);
     this.spinner.stop();
 
-    const table = tableWithoutStringQuotes([
+    const table = this.tableWithoutStringQuotes([
       {
         'Secret name': secret.Name,
         'Secret ARN': secret.ARN,
@@ -336,7 +336,7 @@ export class OrganizationsPrompt {
     const selectedRegion = await select({
       message: 'Which region should this certificate be created in?',
       choices: [
-        new Separator(colors.grey('All available regions')),
+        new Separator(chalk.grey('All available regions')),
         ...regions.map((region) => ({ value: region.RegionName, name: region.RegionName })),
       ],
     });
@@ -345,14 +345,14 @@ export class OrganizationsPrompt {
       message: `Provide a comma separated list of FQDN's, starting with the main one`,
     });
     const domainNames = commaSeparatedDomainNames.split(',').map((domainName) => domainName.trim());
-    if (!domainNames.length) return console.error(colors.red('⚠  Please provide at lease one FQDN'));
+    if (!domainNames.length) return console.error(chalk.red('⚠  Please provide at lease one FQDN'));
 
     this.spinner.start('Requesting new certificate');
     const certificate = await this.acmService.requestCertificate(domainNames, selectedRegion);
     this.spinner.stop();
 
-    const arnTable = tableWithoutStringQuotes([{ 'Certificate ARN': certificate.CertificateArn }] as never[]);
-    const domainTable = tableWithoutStringQuotes(
+    const arnTable = this.tableWithoutStringQuotes([{ 'Certificate ARN': certificate.CertificateArn }] as never[]);
+    const domainTable = this.tableWithoutStringQuotes(
       certificate?.DomainValidationOptions?.map((DomainValidationOption) => ({
         'Record name': DomainValidationOption?.ResourceRecord?.Name,
         'Record type': DomainValidationOption?.ResourceRecord?.Type,

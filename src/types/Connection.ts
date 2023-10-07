@@ -6,7 +6,3 @@ export interface Connection {
   database: string;
   name: string;
 }
-
-export interface Config {
-  connections: Connection[];
-}
