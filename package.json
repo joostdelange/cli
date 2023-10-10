@@ -1,6 +1,6 @@
 {
   "name": "@joostdelange/cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "repository": "github:joostdelange/cli",
   "type": "module",
   "bin": {
@@ -34,12 +34,14 @@
     "chalk": "5.3.0",
     "commander": "11.0.0",
     "ora": "7.0.1",
+    "pg": "8.11.3",
     "signal-exit": "4.1.0"
   },
   "devDependencies": {
     "@smithy/types": "2.3.5",
     "@tsconfig/node-lts": "18.12.5",
     "@types/node": "20.8.4",
+    "@types/pg": "8.10.5",
     "@typescript-eslint/eslint-plugin": "6.7.5",
     "@typescript-eslint/parser": "6.7.5",
     "esbuild": "0.19.4",

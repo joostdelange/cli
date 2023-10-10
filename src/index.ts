@@ -1,10 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { onExit } from 'signal-exit';
 import { OrganizationsPrompt } from './prompts/OrganizationsPrompt.ts';
 import { DatabasePrompt } from './prompts/DatabasePrompt.ts';
-
-onExit(() => process.exit());
 
 const program = new Command('joost');
 
@@ -43,6 +40,16 @@ databaseCommand
   .description('Delete a previously created connection')
   .action(() => {
     databasePrompt.deleteConnection();
+  });
+
+program.option('-n, --connection-name <connectionName>', 'The name of an existing connection');
+
+databaseCommand
+  .command('create-select-query')
+  .alias('create-select')
+  .description('Create a Postgres SELECT query based on a table')
+  .action(() => {
+    databasePrompt.createSelectQuery();
   });
 
 program.parse();

@@ -1,4 +1,4 @@
-import { select, input, password, Separator } from '@inquirer/prompts';
+import { select, input, password, confirm, Separator } from '@inquirer/prompts';
 import chalk from 'chalk';
 import { BasePrompt } from './BasePrompt.ts';
 import { Connection } from '../types/Connection.ts';
@@ -115,5 +115,66 @@ export class DatabasePrompt extends BasePrompt {
     }
 
     return JSON.parse(connection) as Connection;
+  }
+
+  async createSelectQuery(connectionName?: string) {
+    let connection: Connection | undefined | void;
+
+    if (connectionName) {
+      connection = this.config.connections.find((item) => item.name === connectionName);
+    } else if (this.program.opts().connectionName) {
+      connection = this.config.connections.find((item) => item.name === this.program.opts().connectionName);
+    } else {
+      connection = await this.selectConnection({ message: 'Which connection would you like to use?' });
+    }
+
+    if (!connection) return console.error(chalk.red('⚠  The selected connection does not exist'));
+
+    const pool = await this.createDatabaseConnectionPool(connection);
+    const dbConnection = await this.createDatabaseConnection(pool);
+
+    const tableResponse = await dbConnection.query<{ tableName: string }>(
+      `
+        SELECT table_name AS "tableName"
+        FROM information_schema.tables
+        WHERE table_schema = 'public';
+      `,
+    );
+
+    const selectedTable = await select({
+      message: 'Which table would you like to use?',
+      choices: tableResponse?.rows.map((row) => ({ name: row.tableName, value: row.tableName })) || [],
+    });
+
+    const columnResponse = await dbConnection.query<{ columnName: string }>(
+      `
+        SELECT column_name AS "columnName"
+        FROM information_schema.columns
+        WHERE table_name = $1;
+      `,
+      [selectedTable],
+    );
+
+    dbConnection.release();
+
+    const query = [
+      'SELECT',
+      ...(columnResponse?.rows.map((row, index) => {
+        const camelCasedColumn = row.columnName
+          .toLowerCase()
+          .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('_', ''));
+        const comma = index < columnResponse?.rows.length - 1 ? ',' : '';
+
+        return `  ${selectedTable}.${row.columnName} AS "${camelCasedColumn}"${comma}`;
+      }) || []),
+      `FROM ${selectedTable};`,
+    ].join('\n');
+
+    console.log(`\n${query}\n`);
+
+    const anotherOne = await confirm({ message: 'Would you like to create one for another table?', default: false });
+    if (!anotherOne) return;
+
+    this.createSelectQuery(connection.name);
   }
 }

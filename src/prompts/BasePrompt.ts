@@ -2,9 +2,12 @@ import os from 'node:os';
 import fs from 'node:fs';
 import { Console } from 'node:console';
 import { Transform } from 'node:stream';
+import { onExit } from 'signal-exit';
 import ora, { Ora } from 'ora';
 import { Command } from 'commander';
+import pg, { Pool, PoolClient } from 'pg';
 import { Config } from '../types/Config.ts';
+import { Connection } from '../types/Connection';
 
 export class BasePrompt {
   program: Command;
@@ -14,8 +17,17 @@ export class BasePrompt {
   config: Config = {
     connections: [],
   };
+  dbConnection?: PoolClient;
 
   constructor(program: Command) {
+    onExit(() => {
+      if (this.dbConnection) {
+        this.dbConnection.release();
+      }
+
+      process.exit();
+    });
+
     this.program = program;
     this.spinner = ora();
 
@@ -63,5 +75,21 @@ export class BasePrompt {
     }
 
     return result;
+  }
+
+  async createDatabaseConnectionPool(connection: Connection) {
+    return new pg.Pool({
+      host: connection.host,
+      port: connection.port,
+      user: connection.username,
+      password: connection.password,
+      database: connection.database,
+    });
+  }
+
+  async createDatabaseConnection(pool: Pool) {
+    this.dbConnection = await pool.connect();
+
+    return this.dbConnection;
   }
 }
