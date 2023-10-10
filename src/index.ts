@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { onExit } from 'signal-exit';
-import { OrganizationsPrompt } from './prompts/OrganizationsPrompt.js';
-import { DatabasePrompt } from './prompts/DatabasePrompt.js';
+import { OrganizationsPrompt } from './prompts/OrganizationsPrompt.ts';
+import { DatabasePrompt } from './prompts/DatabasePrompt.ts';
 
 onExit(() => process.exit());
 

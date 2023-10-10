@@ -1,7 +1,7 @@
 import { select, input, password, Separator } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { BasePrompt } from './BasePrompt.js';
-import { Connection } from '../types/Connection.js';
+import { BasePrompt } from './BasePrompt.ts';
+import { Connection } from '../types/Connection.ts';
 
 export class DatabasePrompt extends BasePrompt {
   async createConnection() {

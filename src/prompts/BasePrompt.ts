@@ -4,7 +4,7 @@ import { Console } from 'node:console';
 import { Transform } from 'node:stream';
 import ora, { Ora } from 'ora';
 import { Command } from 'commander';
-import { Config } from '../types/Config.js';
+import { Config } from '../types/Config.ts';
 
 export class BasePrompt {
   program: Command;

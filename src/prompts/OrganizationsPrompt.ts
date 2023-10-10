@@ -1,17 +1,17 @@
 import chalk from 'chalk';
 import { Account, OrganizationalUnit, Root } from '@aws-sdk/client-organizations';
 import { input, select, Separator, checkbox, confirm, editor } from '@inquirer/prompts';
-import { OrganizationsService } from '../services/OrganizationsService.js';
 import { AwsCredentialIdentityProvider } from '@smithy/types';
 import { User } from '@aws-sdk/client-iam';
 import { Command } from 'commander';
-import { BasePrompt } from './BasePrompt.js';
-import { IamService } from '../services/IamService.js';
-import { KmsService } from '../services/KmsService.js';
-import { SecretsManagerService } from '../services/SecretsManagerService.js';
-import { AcmService } from '../services/AcmService.js';
-import { AccountService } from '../services/AccountService.js';
-import { CredentialProviderService } from '../services/CredentialProviderService.js';
+import { BasePrompt } from './BasePrompt.ts';
+import { OrganizationsService } from '../services/OrganizationsService.ts';
+import { IamService } from '../services/IamService.ts';
+import { KmsService } from '../services/KmsService.ts';
+import { SecretsManagerService } from '../services/SecretsManagerService.ts';
+import { AcmService } from '../services/AcmService.ts';
+import { AccountService } from '../services/AccountService.ts';
+import { CredentialProviderService } from '../services/CredentialProviderService.ts';
 
 export class OrganizationsPrompt extends BasePrompt {
   accounts: Account[];
