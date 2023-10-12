@@ -43,7 +43,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Typecheck using tsc
-        run: pnpm Typecheck
+        run: pnpm typecheck
 
       - name: Lint using eslint
         run: pnpm lint
