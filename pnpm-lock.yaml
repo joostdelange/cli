@@ -55,9 +55,6 @@ devDependencies:
   '@smithy/types':
     specifier: 2.3.5
     version: 2.3.5
-  '@tsconfig/node-lts':
-    specifier: 18.12.5
-    version: 18.12.5
   '@types/node':
     specifier: 20.8.4
     version: 20.8.4
@@ -171,7 +168,7 @@ packages:
       '@smithy/hash-node': 2.0.11
       '@smithy/invalid-dependency': 2.0.11
       '@smithy/middleware-content-length': 2.0.13
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/middleware-retry': 2.0.16
       '@smithy/middleware-serde': 2.0.11
       '@smithy/middleware-stack': 2.0.5
@@ -216,7 +213,7 @@ packages:
       '@smithy/hash-node': 2.0.11
       '@smithy/invalid-dependency': 2.0.11
       '@smithy/middleware-content-length': 2.0.13
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/middleware-retry': 2.0.16
       '@smithy/middleware-serde': 2.0.11
       '@smithy/middleware-stack': 2.0.5
@@ -262,7 +259,7 @@ packages:
       '@smithy/hash-node': 2.0.11
       '@smithy/invalid-dependency': 2.0.11
       '@smithy/middleware-content-length': 2.0.13
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/middleware-retry': 2.0.16
       '@smithy/middleware-serde': 2.0.11
       '@smithy/middleware-stack': 2.0.5
@@ -308,7 +305,7 @@ packages:
       '@smithy/hash-node': 2.0.11
       '@smithy/invalid-dependency': 2.0.11
       '@smithy/middleware-content-length': 2.0.13
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/middleware-retry': 2.0.16
       '@smithy/middleware-serde': 2.0.11
       '@smithy/middleware-stack': 2.0.5
@@ -356,7 +353,7 @@ packages:
       '@smithy/hash-node': 2.0.11
       '@smithy/invalid-dependency': 2.0.11
       '@smithy/middleware-content-length': 2.0.13
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/middleware-retry': 2.0.16
       '@smithy/middleware-serde': 2.0.11
       '@smithy/middleware-stack': 2.0.5
@@ -403,7 +400,7 @@ packages:
       '@smithy/hash-node': 2.0.11
       '@smithy/invalid-dependency': 2.0.11
       '@smithy/middleware-content-length': 2.0.13
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/middleware-retry': 2.0.16
       '@smithy/middleware-serde': 2.0.11
       '@smithy/middleware-stack': 2.0.5
@@ -448,7 +445,7 @@ packages:
       '@smithy/hash-node': 2.0.11
       '@smithy/invalid-dependency': 2.0.11
       '@smithy/middleware-content-length': 2.0.13
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/middleware-retry': 2.0.16
       '@smithy/middleware-serde': 2.0.11
       '@smithy/middleware-stack': 2.0.5
@@ -493,7 +490,7 @@ packages:
       '@smithy/hash-node': 2.0.11
       '@smithy/invalid-dependency': 2.0.11
       '@smithy/middleware-content-length': 2.0.13
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/middleware-retry': 2.0.16
       '@smithy/middleware-serde': 2.0.11
       '@smithy/middleware-stack': 2.0.5
@@ -536,7 +533,7 @@ packages:
       '@smithy/hash-node': 2.0.11
       '@smithy/invalid-dependency': 2.0.11
       '@smithy/middleware-content-length': 2.0.13
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/middleware-retry': 2.0.16
       '@smithy/middleware-serde': 2.0.11
       '@smithy/middleware-stack': 2.0.5
@@ -581,7 +578,7 @@ packages:
       '@smithy/hash-node': 2.0.11
       '@smithy/invalid-dependency': 2.0.11
       '@smithy/middleware-content-length': 2.0.13
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/middleware-retry': 2.0.16
       '@smithy/middleware-serde': 2.0.11
       '@smithy/middleware-stack': 2.0.5
@@ -772,7 +769,7 @@ packages:
     dependencies:
       '@aws-sdk/types': 3.425.0
       '@aws-sdk/util-format-url': 3.425.0
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/protocol-http': 3.0.7
       '@smithy/signature-v4': 2.0.11
       '@smithy/smithy-client': 2.1.11
@@ -844,7 +841,7 @@ packages:
       '@smithy/hash-node': 2.0.11
       '@smithy/invalid-dependency': 2.0.11
       '@smithy/middleware-content-length': 2.0.13
-      '@smithy/middleware-endpoint': 2.1.0
+      '@smithy/middleware-endpoint': 2.1.1
       '@smithy/middleware-retry': 2.0.16
       '@smithy/middleware-serde': 2.0.11
       '@smithy/middleware-stack': 2.0.5
@@ -1421,12 +1418,13 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@smithy/middleware-endpoint@2.1.0:
-    resolution: {integrity: sha512-e6HZbfrp9CNTJqIPSgkydB9mNQXiq5pkHF3ZB6rOzPPR9PkJBoGFo9TcM7FaaKFUaH4Kc20AX6WwwVyIlNhXTA==}
+  /@smithy/middleware-endpoint@2.1.1:
+    resolution: {integrity: sha512-YAqGagBvHqDEew4EGz9BrQ7M+f+u7ck9EL4zzYirOhIcXeBS/+q4A5+ObHDDwEp38lD6t88YUtFy3OptqEaDQg==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/middleware-serde': 2.0.11
       '@smithy/node-config-provider': 2.1.1
+      '@smithy/shared-ini-file-loader': 2.2.0
       '@smithy/types': 2.3.5
       '@smithy/url-parser': 2.0.11
       '@smithy/util-middleware': 2.0.4
@@ -1691,10 +1689,6 @@ packages:
       '@smithy/types': 2.3.5
       tslib: 2.6.2
     dev: false
-
-  /@tsconfig/node-lts@18.12.5:
-    resolution: {integrity: sha512-KJZX0kQ5FBv77WDVzmQ9y1dUjaJCNXAAz3LSsg5cMwH0AUijVdDQtII+IVprEXdb13U9GjVOBxBzyRvr/ozPxw==}
-    dev: true
 
   /@types/json-schema@7.0.13:
     resolution: {integrity: sha512-RbSSoHliUbnXj3ny0CNFOoxrIDV6SUGyStHsvDqosw6CkdPV8TtWGlfecuK4ToyMEAql6pzNxgCFKanovUzlgQ==}
