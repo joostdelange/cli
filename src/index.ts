@@ -22,18 +22,18 @@ const databaseCommand = program
   .alias('db')
   .description('Use one of the sub-commands to manage connections and other useful database-related stuff');
 
-program.option('-h, --host <host>', 'Host of the new connection');
-program.option('-p, --port <port>', 'Port that should be used');
-program.option('-u, --username <username>', 'Username of the new connection');
-program.option('-d, --database <database>', 'Name of the database that should be used');
-program.option('-n, --name <name>', 'Friendly (unique) name for the connection');
-
 databaseCommand
   .command('create-connection')
   .description('Create a new database connection and save it to the local config')
   .action(() => {
     databasePrompt.createConnection();
   });
+
+databaseCommand.option('-h, --host <host>', 'Host of the new connection');
+databaseCommand.option('-p, --port <port>', 'Port that should be used');
+databaseCommand.option('-u, --username <username>', 'Username of the new connection');
+databaseCommand.option('-d, --database <database>', 'Name of the database that should be used');
+databaseCommand.option('-n, --name <name>', 'Friendly (unique) name for the connection');
 
 databaseCommand
   .command('delete-connection')
@@ -42,7 +42,7 @@ databaseCommand
     databasePrompt.deleteConnection();
   });
 
-program.option('-n, --connection-name <connectionName>', 'The name of an existing connection');
+databaseCommand.option('-n, --connection-name <connectionName>', 'The name of an existing connection');
 
 databaseCommand
   .command('create-select-query')
