@@ -20,7 +20,7 @@ program
 const databaseCommand = program
   .command('database')
   .alias('db')
-  .description('Use the subcommands below to use this one');
+  .description('Use one of the sub-commands to manage connections and other useful database-related stuff');
 
 program.option('-h, --host <host>', 'Host of the new connection');
 program.option('-p, --port <port>', 'Port that should be used');
@@ -30,14 +30,14 @@ program.option('-n, --name <name>', 'Friendly (unique) name for the connection')
 
 databaseCommand
   .command('create-connection')
-  .description('Create a new connection')
+  .description('Create a new database connection and save it to the local config')
   .action(() => {
     databasePrompt.createConnection();
   });
 
 databaseCommand
   .command('delete-connection')
-  .description('Delete a previously created connection')
+  .description('Delete an existing database connection from the local config')
   .action(() => {
     databasePrompt.deleteConnection();
   });
@@ -47,7 +47,7 @@ program.option('-n, --connection-name <connectionName>', 'The name of an existin
 databaseCommand
   .command('create-select-query')
   .alias('create-select')
-  .description('Create a Postgres SELECT query based on a table')
+  .description('Create SELECT query based on a single table from a previously created database connection')
   .action(() => {
     databasePrompt.createSelectQuery();
   });

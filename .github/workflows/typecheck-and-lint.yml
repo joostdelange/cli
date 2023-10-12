@@ -1,4 +1,4 @@
-name: Publish Package to npm
+name: Publish Package to npmjs
 on:
   release:
     types: [published]
@@ -38,10 +38,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build project using ESbuild
-        run: pnpm build
+      - name: Typecheck using tsc
+        run: pnpm Typecheck
 
-      - name: Publish new version
-        run: npm publish --provenance --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Lint using eslint
+        run: pnpm lint

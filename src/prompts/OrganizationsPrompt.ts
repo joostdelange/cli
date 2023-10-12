@@ -14,17 +14,17 @@ import { AccountService } from '../services/AccountService.ts';
 import { CredentialProviderService } from '../services/CredentialProviderService.ts';
 
 export class OrganizationsPrompt extends BasePrompt {
-  accounts: Account[];
-  organizationRoot: Root;
-  organizationalUnits: OrganizationalUnit[];
+  accounts: Account[] = [];
+  organizationRoot: Root = {};
+  organizationalUnits: OrganizationalUnit[] = [];
   credentialProviderService: CredentialProviderService;
   organizationsService: OrganizationsService;
   credentials?: AwsCredentialIdentityProvider;
-  iamService: IamService;
-  kmsService: KmsService;
-  secretsManagerService: SecretsManagerService;
-  acmService: AcmService;
-  accountService: AccountService;
+  iamService?: IamService;
+  kmsService?: KmsService;
+  secretsManagerService?: SecretsManagerService;
+  acmService?: AcmService;
+  accountService?: AccountService;
 
   constructor(program: Command) {
     super(program);
@@ -189,7 +189,7 @@ export class OrganizationsPrompt extends BasePrompt {
 
   async setupUser() {
     this.spinner.start('Fetching IAM users');
-    const users = await this.iamService.getUsers();
+    const users = (await this.iamService?.getUsers()) || [];
     this.spinner.stop();
 
     const selectedUserArn = await select({
@@ -210,11 +210,11 @@ export class OrganizationsPrompt extends BasePrompt {
         message: 'What should be the name of the user?',
       });
 
-      selectedUser = await this.iamService.createUser(userName);
+      selectedUser = await this.iamService?.createUser(userName);
     }
 
     this.spinner.start('Fetching IAM policies');
-    const policies = await this.iamService.getPolicies();
+    const policies = (await this.iamService?.getPolicies()) || [];
     this.spinner.stop();
 
     const selectedPolicies = await checkbox({
@@ -231,10 +231,10 @@ export class OrganizationsPrompt extends BasePrompt {
     const [firstSelectedPolicy] = selectedPolicies;
 
     if (firstSelectedPolicy) {
-      await this.iamService.attachUserPolicies(selectedUser, selectedPolicies);
+      await this.iamService?.attachUserPolicies(selectedUser, selectedPolicies);
     }
 
-    const accessKeyMetadata = await this.iamService.getUserAccessKeys(selectedUser);
+    const accessKeyMetadata = await this.iamService?.getUserAccessKeys(selectedUser);
 
     if ((accessKeyMetadata?.length || 0) < 2) {
       const shouldCreateAccessKey = await confirm({
@@ -242,7 +242,7 @@ export class OrganizationsPrompt extends BasePrompt {
       });
 
       if (shouldCreateAccessKey) {
-        const accessKey = await this.iamService.createUserAccessKey(selectedUser);
+        const accessKey = await this.iamService?.createUserAccessKey(selectedUser);
         const table = this.tableWithoutStringQuotes([
           {
             'User name': accessKey?.UserName,
@@ -261,7 +261,7 @@ export class OrganizationsPrompt extends BasePrompt {
     if (!keyAliasName) return console.error(chalk.red('⚠  The alias name is required'));
 
     this.spinner.start('Creating new key');
-    const keyMetadata = await this.kmsService.createKey(`alias/${keyAliasName}`);
+    const keyMetadata = await this.kmsService?.createKey(`alias/${keyAliasName}`);
     this.spinner.stop();
 
     const table = this.tableWithoutStringQuotes([
@@ -278,7 +278,7 @@ export class OrganizationsPrompt extends BasePrompt {
     });
 
     if (shouldOpenPolicyEditor) {
-      const policy = await this.kmsService.getKeyPolicy(keyMetadata);
+      const policy = await this.kmsService?.getKeyPolicy(keyMetadata);
       const newPolicy = await editor({
         message: '',
         default: policy,
@@ -286,7 +286,7 @@ export class OrganizationsPrompt extends BasePrompt {
         waitForUseInput: false,
       });
 
-      await this.kmsService.updateKeyPolicy(keyMetadata, newPolicy);
+      await this.kmsService?.updateKeyPolicy(keyMetadata, newPolicy);
     }
   }
 
@@ -295,7 +295,7 @@ export class OrganizationsPrompt extends BasePrompt {
     if (!secretName) return console.error(chalk.red('⚠  The name is required'));
 
     this.spinner.start('Fetching existing KMS keys');
-    const keys = await this.kmsService.listKeys();
+    const keys = (await this.kmsService?.listKeys()) || [];
     this.spinner.stop();
 
     let selectedKeyAliasName: string | undefined;
@@ -315,13 +315,13 @@ export class OrganizationsPrompt extends BasePrompt {
     }
 
     this.spinner.start('Creating new secret');
-    const secret = await this.secretsManagerService.createSecret(secretName, selectedKeyAliasName);
+    const secret = await this.secretsManagerService?.createSecret(secretName, selectedKeyAliasName);
     this.spinner.stop();
 
     const table = this.tableWithoutStringQuotes([
       {
-        'Secret name': secret.Name,
-        'Secret ARN': secret.ARN,
+        'Secret name': secret?.Name,
+        'Secret ARN': secret?.ARN,
       },
     ] as never[]);
 
@@ -330,14 +330,14 @@ export class OrganizationsPrompt extends BasePrompt {
 
   async requestCertificate() {
     this.spinner.start('Fetching available regions');
-    const regions = await this.accountService.listRegions();
+    const regions = await this.accountService?.listRegions();
     this.spinner.stop();
 
     const selectedRegion = await select({
       message: 'Which region should this certificate be created in?',
       choices: [
         new Separator(chalk.grey('All available regions')),
-        ...regions.map((region) => ({ value: region.RegionName, name: region.RegionName })),
+        ...(regions?.map((region) => ({ value: region.RegionName, name: region.RegionName })) || []),
       ],
     });
 
@@ -348,10 +348,10 @@ export class OrganizationsPrompt extends BasePrompt {
     if (!domainNames.length) return console.error(chalk.red('⚠  Please provide at lease one FQDN'));
 
     this.spinner.start('Requesting new certificate');
-    const certificate = await this.acmService.requestCertificate(domainNames, selectedRegion);
+    const certificate = await this.acmService?.requestCertificate(domainNames, selectedRegion);
     this.spinner.stop();
 
-    const arnTable = this.tableWithoutStringQuotes([{ 'Certificate ARN': certificate.CertificateArn }] as never[]);
+    const arnTable = this.tableWithoutStringQuotes([{ 'Certificate ARN': certificate?.CertificateArn }] as never[]);
     const domainTable = this.tableWithoutStringQuotes(
       certificate?.DomainValidationOptions?.map((DomainValidationOption) => ({
         'Record name': DomainValidationOption?.ResourceRecord?.Name,
